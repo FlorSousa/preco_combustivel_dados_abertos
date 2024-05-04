@@ -1,0 +1,20 @@
+services:
+  db_prod:
+    restart: always
+    container_name: db-prod
+    image: postgres:13
+    volumes:
+      - ./pg-init-scripts:/docker-entrypoint-initdb.d
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${postgres}
+    ports:
+      - 5432
+
+  python_script:
+    container_name: python-script
+    image: python:3
+    volumes:
+      - .:/scripts
+    command: ["python", "/scripts/download_script.py"]
