@@ -8,13 +8,17 @@ services:
     environment:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_DB=${postgres}
+      - POSTGRES_DB=${DB_NAME}
     ports:
       - 5432
 
-  python_script:
-    container_name: python-script
-    image: python:3
+  web_prod:
+    restart: always
+    container_name: web-prod
+    build: .
     volumes:
-      - .:/scripts
-    command: ["python", "/scripts/download_script.py"]
+      - .:/code
+    depends_on:
+      - db_prod
+    links:
+      - db_prod:db_prod
