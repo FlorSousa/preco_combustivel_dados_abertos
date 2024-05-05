@@ -1,7 +1,7 @@
 services:
-  db_prod:
+  pg_database:
     restart: always
-    container_name: db-prod
+    container_name: pg_database
     image: postgres:13
     volumes:
       - ./pg-init-scripts:/docker-entrypoint-initdb.d
@@ -12,13 +12,14 @@ services:
     ports:
       - 5432
 
-  web_prod:
+  scripts:
     restart: always
-    container_name: web-prod
+    container_name: scripts
     build: .
+    command: sh -c "/app/wait-for-it.sh pg_database:5432 && python3 create_dimensions.py && python3 download_script.py"
     volumes:
       - .:/code
     depends_on:
-      - db_prod
+      - pg_database
     links:
-      - db_prod:db_prod
+      - pg_database:pg_database
