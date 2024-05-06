@@ -63,5 +63,5 @@ def download_csv(year):
 date = datetime.date.today()
 current_month = date.month
 current_year = date.year
-years_list = list(range(2004,current_year+1)) if current_month>6 else list(range(2004,current_year))
-url_list = list(map(download_csv,years_list))
+#years_list = list(range(2004,current_year+1)) if current_month>6 else list(range(2004,current_year))
+url_list = list(map(download_csv,[2004]))

@@ -13,12 +13,11 @@ services:
       - 5432
 
   scripts:
-    restart: always
     container_name: scripts
     build: .
     command: sh -c "/app/wait-for-it.sh pg_database:5432 && python3 create_dimensions.py && python3 download_script.py"
     volumes:
-      - .:/code
+      - .:/app
     depends_on:
       - pg_database
     links:
