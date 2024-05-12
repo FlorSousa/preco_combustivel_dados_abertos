@@ -29,7 +29,7 @@ def unzip_csv(year,data):
             for file in filelist:
                 splited_name = file.split("-") if year == 2022 else file.split("_")
                 semester = splited_name[splited_name.__len__()-1].split(".")[0] if year == 2022 else splited_name[splited_name.__len__()-1].split(".")[1]
-                os.rename(f"csv_data/{year}/{file}", f"csv_data/{year}/preco_combustivel_{year}_{semester}.csv")
+                os.rename(f"csv_data/{year}/{file}", f"csv_data/{year}/preco_combustivel_{year}_{int(semester)}.csv")
 
 def download_csv(year):
     urls_tuple = get_url(year)
@@ -63,5 +63,5 @@ def download_csv(year):
 date = datetime.date.today()
 current_month = date.month
 current_year = date.year
-#years_list = list(range(2004,current_year+1)) if current_month>6 else list(range(2004,current_year))
-url_list = list(map(download_csv,[2004]))
+years_list = list(range(2004,current_year+1)) if current_month>6 else list(range(2004,current_year))
+url_list = list(map(download_csv,years_list))

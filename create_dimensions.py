@@ -46,11 +46,10 @@ def replace_by_id(dataframe,dim,field_name) -> None:
     dataframe[field_name] = dataframe[field_name].replace(mapeamento)
     
     
-def t(dataframe):
+def insert_in_db(dataframe):
     dim_to_replace = {
         "dim_city":"Municipio",
         "dim_fuel":"Produto",
-        #"dim_gas_station":"Revenda",
         "dim_region":"Regiao - Sigla",
         "dim_flag":"Bandeira",
         "dim_uf":"Estado - Sigla"
@@ -70,6 +69,8 @@ def t(dataframe):
     }
     dataframe = dataframe.rename(columns=columns_to_rename)
     print("Inserting data to DB")
+    from datetime  import datetime
+    dataframe['measurement_date'] = dataframe['measurement_date'].apply(lambda x: datetime.strptime(x, '%d/%m/%Y').strftime('%Y-%m-%d'))
     query_insert = 'INSERT INTO measurment(price, measurement_date, gas_station_name, cnpj_gas_station, fuel_type_id, uf_id, city_id, region_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)'
     data_to_insert = dataframe[['price', 'measurement_date', 'gas_station_name', 'cnpj_gas_station', 'fuel_type_id', 'uf_id', 'city_id', 'region_id']].values.tolist()
     cursor.executemany(query_insert, data_to_insert)
@@ -87,13 +88,15 @@ def load_data():
     for year in years:
         num_semester = len(os.listdir(f"csv_data/{year}"))
         for semester in range(1,num_semester+1):
-            chunks = pd.read_csv(f"csv_data/{year}/preco_combustivel_{year}_{semester}.csv", chunksize=10000, delimiter=";")
+            chunks = pd.read_csv(f"csv_data/{year}/preco_combustivel_{year}_{semester}.csv", chunksize=10000, delimiter=";",encoding='ISO-8859-1')
             chunks = map(lambda chunk: chunk.drop(columns_to_remove, axis=1), chunks)
             cleaned_df = pd.concat(list(chunks))
             cleaned_df = cleaned_df.dropna()
+            cleaned_df = cleaned_df[cleaned_df["Produto"].isin(["GASOLINA","ETANOL","DIESEL", "GNV"])]
+            cleaned_df.columns = cleaned_df.columns.str.replace('ï»¿', '')
             load_dim_flag(cleaned_df)
             load_dim_city(cleaned_df)
-            t(cleaned_df)
+            insert_in_db(cleaned_df)
         print(f"\n{year} inserted in DB")
 
     print("\nProcess finished")

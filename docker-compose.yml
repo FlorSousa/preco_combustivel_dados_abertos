@@ -15,7 +15,7 @@ services:
   scripts:
     container_name: scripts
     build: .
-    command: sh -c "/app/wait-for-it.sh pg_database:5432 && python3 create_dimensions.py && python3 download_script.py"
+    command: sh -c "/app/wait-for-it.sh pg_database:5432 && python3 download_script.py && python3 create_dimensions.py"
     volumes:
       - .:/app
     depends_on:
