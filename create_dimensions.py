@@ -42,8 +42,8 @@ def load_dim_city(dataframe):
 def replace_by_id(dataframe,dim,field_name) -> None:
     cursor.execute(f"SELECT * FROM public.{dim}")
     select_return = cursor.fetchall() 
-    mapeamento = {valor: chave for chave, valor in select_return}
-    dataframe[field_name] = dataframe[field_name].replace(mapeamento)
+    dim_map = {value: key for key, value in select_return}
+    dataframe[field_name] = dataframe[field_name].replace(dim_map)
     
     
 def insert_in_db(dataframe):
@@ -94,6 +94,7 @@ def load_data():
             cleaned_df = cleaned_df.dropna()
             cleaned_df = cleaned_df[cleaned_df["Produto"].isin(["GASOLINA","ETANOL","DIESEL", "GNV"])]
             cleaned_df.columns = cleaned_df.columns.str.replace('ï»¿', '')
+            cleaned_df["Valor de Venda"] = cleaned_df["Valor de Venda"].str.replace(',','.').astype(float)
             load_dim_flag(cleaned_df)
             load_dim_city(cleaned_df)
             insert_in_db(cleaned_df)
