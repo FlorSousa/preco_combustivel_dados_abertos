@@ -1,6 +1,6 @@
 # Data Analysis about the fuel price in Brazil
 
-##### Author: Jhonatas Flor
+##### Author: [Jhonatas Flor](https://www.linkedin.com/in/jhonatas-flor-de-sousa)
 
 ## Idea
 The present project is a simple presentation about how the prices of fuel in Brazil have changed since the first measurement in 2004.
