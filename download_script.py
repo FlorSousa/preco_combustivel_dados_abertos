@@ -16,9 +16,13 @@ def get_url(year):
 def create_folder(year):
     if not os.path.exists("csv_data"):
         os.mkdir("csv_data")
-    
     if not os.path.exists(f"csv_data/{year}"):
         os.mkdir(f"csv_data/{year}")
+        return True
+    
+    if len(os.listdir(f"csv_data/{year}/"))>0:
+            return False
+   
 
 def unzip_csv(year,data):
     zip_content = io.BytesIO(data)
@@ -34,7 +38,10 @@ def unzip_csv(year,data):
 def download_csv(year):
     urls_tuple = get_url(year)
     
-    create_folder(year)
+    if not create_folder(year):
+        tqdm.write(f"Skipping {year}. The CSV has already been downloaded")
+        return False
+    
     semester = 1
     import requests
     for url in urls_tuple:
@@ -58,7 +65,7 @@ def download_csv(year):
         semester+=1
     
     return True
-       
+    
 
 date = datetime.date.today()
 current_month = date.month
